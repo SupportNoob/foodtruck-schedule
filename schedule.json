@@ -1,0 +1,10 @@
+{
+  "properties": [
+    { "id": "prop_northcreek",    "name": "Northcreek",       "color": "#c9a84c" },
+    { "id": "prop_985",           "name": "985 Space Center", "color": "#a0b4c8" },
+    { "id": "prop_1055",          "name": "1055 Newport",     "color": "#8eb89a" },
+    { "id": "prop_gateway",       "name": "Garden Gateway",   "color": "#b8a09a" },
+    { "id": "prop_presidio",      "name": "Presidio",         "color": "#9aacb8" }
+  ],
+  "trucks": []
+}

@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: foodtruck-schedule
+    env: node
+    buildCommand: npm install
+    startCommand: node server.js
+    envVars:
+      - key: ADMIN_HASH
+        value: ea0d7e719e7a5cfc1f817d97bab22156da439145483a801c0c00ad3de36ee669
+      - key: SESSION_SECRET
+        generateValue: true
