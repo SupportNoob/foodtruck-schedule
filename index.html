@@ -39,13 +39,12 @@
   }
   .logo { display: flex; align-items: center; gap: 14px; text-decoration: none; }
   .logo-badge {
-    width: 36px; height: 36px; border: 2px solid #2a5298;
+    width: 44px; height: 44px; flex-shrink: 0;
     display: flex; align-items: center; justify-content: center;
-    font-size: 11px; font-weight: 700; color: #4a7fd4; letter-spacing: 1px;
-    flex-shrink: 0;
   }
+  .logo-badge img { width: 100%; height: 100%; object-fit: contain; }
   .logo-text-wrap { display: flex; flex-direction: column; }
-  .logo-main { font-family: 'Bebas Neue', sans-serif; font-size: 22px; letter-spacing: 3px; color: #4a7fd4; line-height: 1; }
+  .logo-main { font-family: 'Bebas Neue', sans-serif; font-size: 22px; letter-spacing: 3px; color: #ffffff; line-height: 1; }
   .logo-sub { font-size: 9px; color: var(--muted); letter-spacing: 3px; text-transform: uppercase; margin-top: 2px; }
   .header-right { display: flex; align-items: center; gap: 10px; }
   .last-updated { font-size: 10px; color: var(--muted); letter-spacing: 1px; }
@@ -269,10 +268,12 @@
 <!-- HEADER -->
 <header>
   <a class="logo" href="#">
-    <div class="logo-badge">ACP</div>
+    <div class="logo-badge">
+      <img src="https://raw.githubusercontent.com/SupportNoob/foodtruck-schedule/main/acp.png" alt="ACP" onerror="this.parentNode.innerHTML='<span style=\'font-size:11px;font-weight:700;color:#4a7fd4;letter-spacing:1px;\'>ACP</span>'"/>
+    </div>
     <div class="logo-text-wrap">
       <div class="logo-main">Alturas Capital Partners</div>
-      <div class="logo-sub">Food Truck Schedule</div>
+      <div class="logo-sub">Colorado Springs, Colorado</div>
     </div>
   </a>
   <div class="header-right">
@@ -286,7 +287,7 @@
   <div class="hero-eyebrow">Tenant Amenity Program</div>
   <div class="hero-rule"></div>
   <h1>Food Truck<br/><span>Visit Schedule</span></h1>
-  <p class="hero-sub">Browse upcoming food truck visits across all Alturas Capital Partners properties.</p>
+  <p class="hero-sub">Browse upcoming food truck visits across all Alturas Capital Partners properties in Colorado Springs, Colorado.</p>
   <div class="hero-stats">
     <div class="hstat"><div class="hstat-num" id="statVisits">–</div><div class="hstat-lbl">Upcoming Visits</div></div>
     <div class="hstat"><div class="hstat-num" id="statProps">5</div><div class="hstat-lbl">Properties</div></div>
@@ -340,8 +341,11 @@
 
 <!-- FOOTER -->
 <footer>
-  <div class="footer-copy">© Alturas Capital Partners · Tenant Amenity Program</div>
-  <div class="footer-note">Schedule pulls live from Google Sheets — click Refresh for latest.</div>
+  <div class="footer-copy">© Alturas Capital Partners · Colorado Springs, Colorado</div>
+  <div class="footer-note">
+    Want to suggest a food truck? Email us at
+    <a href="mailto:admincos@alturas.com" style="color:#4a7fd4;text-decoration:none;">admincos@alturas.com</a>
+  </div>
 </footer>
 
 <!-- LIGHTBOX -->
