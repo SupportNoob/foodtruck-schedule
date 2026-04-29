@@ -612,27 +612,56 @@ function renderMain(){
   const {start:wS,end:wE}=getWeekBounds();
   let filtered=trucks.filter(t=>matchProp(t));
   
-  // Apply date filter if set
-  if(filterDate) filtered=filtered.filter(t=>t.date===filterDate);
-
-  const thisWeek=filtered.filter(t=>t.date>=wS&&t.date<=wE).sort((a,b)=>a.date.localeCompare(b.date));
-  const future  =filtered.filter(t=>t.date>wE).sort((a,b)=>a.date.localeCompare(b.date));
-  const past    =filtered.filter(t=>t.date<wS).sort((a,b)=>b.date.localeCompare(a.date));
-
   const label=filterProp==='all'?'All <span style="color:#4a7fd4">Visits</span>':`<span style="color:#4a7fd4">${filterProp}</span>`;
   const wEndDt=new Date(wE+'T00:00:00');
 
   let html=`<div class="content-main-title">${label}</div>`;
 
-  // Date filter indicator
+  // If date filter is set, show only that date's trucks
   if(filterDate){
+    const dateFiltered = filtered.filter(t=>t.date===filterDate);
     const dt=new Date(filterDate+'T00:00:00');
     const dateStr=dt.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'});
+    
     html+=`<div style="margin-bottom:18px;padding:12px 16px;background:rgba(42,82,152,0.1);border:1px solid rgba(42,82,152,0.3);border-radius:8px;display:flex;align-items:center;gap:12px;">
       <span style="font-size:13px;color:#4a7fd4;">Showing visits for: <strong>${dateStr}</strong></span>
       <button onclick="clearDateFilter()" style="margin-left:auto;padding:6px 14px;background:transparent;border:1px solid rgba(42,82,152,0.4);border-radius:6px;color:#4a7fd4;font-size:11px;font-weight:600;cursor:pointer;letter-spacing:1px;text-transform:uppercase;">Clear Filter</button>
     </div>`;
+    
+    // Determine badge type based on date
+    let badgeClass = 'badge-week';
+    let badgeLabel = 'Selected Date';
+    if(filterDate === todayStr){
+      badgeClass = 'badge-week';
+      badgeLabel = 'Today';
+    } else if(filterDate < todayStr){
+      badgeClass = 'badge-past';
+      badgeLabel = 'Past Visit';
+    } else if(filterDate > wE){
+      badgeClass = 'badge-future';
+      badgeLabel = 'Upcoming';
+    }
+    
+    html+=`<div class="section-head">
+      <span class="section-badge ${badgeClass}">${badgeLabel}</span>
+      <span class="section-title">${dateStr}</span>
+      <span class="section-count">${dateFiltered.length} visit${dateFiltered.length!==1?'s':''}</span>
+    </div>`;
+    
+    if(dateFiltered.length){
+      html+=`<div class="trucks-grid">${dateFiltered.map(t=>cardHtml(t,t.date===todayStr,t.date<todayStr)).join('')}</div>`;
+    } else {
+      html+=`<div class="empty-section"><div class="ei">🚚</div><div class="em">No truck visits on this date</div></div>`;
+    }
+    
+    document.getElementById('mainContent').innerHTML=html;
+    return;
   }
+
+  // Normal view (no date filter)
+  const thisWeek=filtered.filter(t=>t.date>=wS&&t.date<=wE).sort((a,b)=>a.date.localeCompare(b.date));
+  const future  =filtered.filter(t=>t.date>wE).sort((a,b)=>a.date.localeCompare(b.date));
+  const past    =filtered.filter(t=>t.date<wS).sort((a,b)=>b.date.localeCompare(a.date));
 
   // THIS WEEK
   html+=`<div class="section-head">
@@ -644,29 +673,26 @@ function renderMain(){
     ?`<div class="trucks-grid">${thisWeek.map(t=>cardHtml(t,t.date===todayStr,false)).join('')}</div>`
     :`<div class="empty-section"><div class="ei">🚚</div><div class="em">No truck visits this week</div></div>`;
 
-  // Only show future/past if no date filter
-  if(!filterDate){
-    // FUTURE
-    html+=`<div class="section-head">
-      <span class="section-badge badge-future">Upcoming</span>
-      <span class="section-title">Future Visits</span>
-      <span class="section-count">${future.length} visit${future.length!==1?'s':''}</span>
-    </div>`;
-    html+=future.length
-      ?`<div class="trucks-grid">${future.map(t=>cardHtml(t,false,false)).join('')}</div>`
-      :`<div class="empty-section"><div class="ei">📅</div><div class="em">No future visits scheduled yet</div></div>`;
+  // FUTURE
+  html+=`<div class="section-head">
+    <span class="section-badge badge-future">Upcoming</span>
+    <span class="section-title">Future Visits</span>
+    <span class="section-count">${future.length} visit${future.length!==1?'s':''}</span>
+  </div>`;
+  html+=future.length
+    ?`<div class="trucks-grid">${future.map(t=>cardHtml(t,false,false)).join('')}</div>`
+    :`<div class="empty-section"><div class="ei">📅</div><div class="em">No future visits scheduled yet</div></div>`;
 
-    // PAST
-    html+=`<button class="past-toggle" id="pastToggle" onclick="togglePast()">
-      <span class="section-badge badge-past">Past Visits</span>
-      <span style="font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:2px;color:var(--muted);">Previous Food Truck Visits</span>
-      <span style="font-size:11px;color:var(--muted);">${past.length} visit${past.length!==1?'s':''}</span>
-      <span class="past-arrow">▼</span>
-    </button>
-    <div class="past-content" id="pastContent">
-      <div class="trucks-grid">${past.map(t=>cardHtml(t,false,true)).join('')}</div>
-    </div>`;
-  }
+  // PAST
+  html+=`<button class="past-toggle" id="pastToggle" onclick="togglePast()">
+    <span class="section-badge badge-past">Past Visits</span>
+    <span style="font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:2px;color:var(--muted);">Previous Food Truck Visits</span>
+    <span style="font-size:11px;color:var(--muted);">${past.length} visit${past.length!==1?'s':''}</span>
+    <span class="past-arrow">▼</span>
+  </button>
+  <div class="past-content" id="pastContent">
+    <div class="trucks-grid">${past.map(t=>cardHtml(t,false,true)).join('')}</div>
+  </div>`;
 
   document.getElementById('mainContent').innerHTML=html;
 }
