@@ -478,7 +478,11 @@ async function loadData() {
       .map((r,i)=>({
         id:i+1, name:(r[0]||'').trim(),
         property:(r[1]||'').trim(), date:parseDate(r[2]),
-        time:(r[3]||'TBD').trim(), menu:(r[4]||'').trim()
+        time:(r[3]||'TBD').trim(),
+        menu:(r[4]||'').trim(),
+        menus:[r[4], r[5], r[6], r[7]]
+          .map(v => (v || '').trim())
+          .filter(Boolean)
       }));
 
     document.getElementById('lastUpdated').textContent =
@@ -496,10 +500,20 @@ async function loadData() {
 function iso(d){return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;}
 function parseDate(raw){
   if(!raw) return '';
-  raw=raw.trim();
+  raw=String(raw).trim();
   if(/^\d{4}-\d{2}-\d{2}$/.test(raw)) return raw;
   const p=raw.split('/');
-  if(p.length===3) return `${p[2]}-${p[0].padStart(2,'0')}-${p[1].padStart(2,'0')}`;
+  if(p.length===3){
+    let year = p[2].trim();
+    if(year.length===2) year = `20${year}`;
+    return `${year}-${p[0].padStart(2,'0')}-${p[1].padStart(2,'0')}`;
+  }
+  if(/^\d+$/.test(raw)){
+    const excelEpoch = new Date(Date.UTC(1899, 11, 30));
+    const serialDate = new Date(excelEpoch);
+    serialDate.setUTCDate(excelEpoch.getUTCDate() + Number(raw));
+    return iso(new Date(serialDate.getUTCFullYear(), serialDate.getUTCMonth(), serialDate.getUTCDate()));
+  }
   const d=new Date(raw); if(!isNaN(d)) return iso(d);
   return raw;
 }
@@ -580,6 +594,7 @@ function renderCalendar(){
 function selectDate(ds){
   filterDate = filterDate===ds ? null : ds;
   renderCalendar(); renderMain();
+  document.getElementById('mainContent').scrollIntoView({behavior:'smooth', block:'start'});
 }
 
 function calNav(dir){
@@ -703,7 +718,7 @@ function clearDateFilter(){
 }
 
 function cardHtml(t,isToday,isPast){
-  const col=getPropColor(t.property),src=driveUrl(t.menu);
+  const col=getPropColor(t.property),src=driveUrl((t.menus && t.menus[0]) || t.menu);
   return `<div class="truck-card${isToday?' today-card':''}${isPast?' past-card':''}" onclick="openLb(${t.id})">
     <div class="menu-img-wrap">
       <div class="prop-ribbon" style="color:${col}">${t.property}</div>
@@ -745,7 +760,9 @@ function openLb(id){
   
   // Collect all menu URLs from columns E, F, G, H (menu, menu2, menu3, menu4)
   // Since we only have menu in current data structure, we'll check if menu contains multiple URLs separated by |
-  const menuUrls = t.menu ? t.menu.split('|').map(u=>u.trim()).filter(u=>u) : [];
+  const menuUrls = (t.menus && t.menus.length)
+    ? t.menus.flatMap(url => url.split('|').map(u => u.trim()).filter(Boolean))
+    : (t.menu ? t.menu.split('|').map(u=>u.trim()).filter(u=>u) : []);
   currentMenuUrls = menuUrls.map(driveUrl).filter(u=>u);
   
   if(!currentMenuUrls.length){
