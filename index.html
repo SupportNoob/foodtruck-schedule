@@ -521,8 +521,10 @@ function driveUrl(url){
   if(!url) return null;
   if(url.startsWith('http')&&!url.includes('drive.google.com')) {
     // Fix old GitHub URLs pointing to admincos.github.io
-    if(url.includes('admincos.github.io')) {
-      return url.replace('admincos.github.io', 'raw.githubusercontent.com/AlturasCOS');
+    if(url.includes('admincos.github.io/foodtruck-schedule')) {
+      // Convert https://admincos.github.io/foodtruck-schedule/menus/file.jpg
+      // to https://raw.githubusercontent.com/AlturasCOS/foodtruck-schedule/main/menus/file.jpg
+      return url.replace('admincos.github.io/foodtruck-schedule', 'raw.githubusercontent.com/AlturasCOS/foodtruck-schedule/main');
     }
     return url;
   }
