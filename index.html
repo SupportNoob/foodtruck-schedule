@@ -51,7 +51,8 @@ header{
 }
 .logo{display:flex;align-items:center;gap:14px;text-decoration:none;}
 .logo-badge{width:44px;height:44px;flex-shrink:0;display:flex;align-items:center;justify-content:center;}
-.logo-badge img{width:100%;height:100%;object-fit:contain;}
+.logo-badge img{width:100%;height:100%;object-fit:contain;filter:brightness(1);}
+body.light-mode .logo-badge img{filter:brightness(0);}
 .logo-main{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:3px;color:var(--text);line-height:1;}
 .logo-sub{font-size:9px;color:var(--muted);letter-spacing:3px;text-transform:uppercase;margin-top:2px;}
 .header-right{display:flex;align-items:center;gap:10px;}
@@ -127,29 +128,50 @@ body.light-mode .today-truck-item{
 .today-empty-icon{font-size:32px;opacity:.2;}
 .today-empty-txt{font-size:12px;letter-spacing:1px;}
 
-/* PROPERTY NAV */
-.prop-nav{
+/* FILTER SECTION */
+.filter-section{
   background:var(--surface);border-bottom:1px solid var(--border);
-  position:sticky;top:68px;z-index:190;
-  padding:0 28px;display:flex;align-items:center;overflow-x:auto;
-  gap:8px;
+  padding:20px 28px;display:flex;align-items:center;justify-content:center;gap:24px;flex-wrap:wrap;
 }
-.prop-nav::-webkit-scrollbar{height:0;}
-.prop-btn, .cuisine-btn, .truck-btn{
-  padding:16px 18px;font-family:'DM Sans',sans-serif;font-size:10px;
-  font-weight:600;letter-spacing:2px;text-transform:uppercase;
-  color:var(--muted);background:transparent;border:none;cursor:pointer;
-  border-bottom:2px solid transparent;transition:all .2s;white-space:nowrap;
+.filter-group{
+  position:relative;
+  display:inline-block;
+  min-width:160px;
 }
-.prop-btn:hover, .cuisine-btn:hover, .truck-btn:hover{color:var(--text);}
-.prop-btn.active, .cuisine-btn.active, .truck-btn.active{color:var(--accent-light);border-bottom-color:var(--accent);}
+.filter-btn{
+  width:100%;padding:10px 14px;border-radius:6px;
+  background:var(--card);border:1px solid var(--border);
+  color:var(--text);font-family:'DM Sans',sans-serif;font-size:11px;
+  font-weight:600;letter-spacing:1px;text-transform:uppercase;
+  cursor:pointer;transition:all .2s;display:flex;align-items:center;
+  justify-content:space-between;
+}
+.filter-btn:hover{border-color:var(--accent);color:var(--accent-light);}
+.filter-dropdown{
+  display:none;position:absolute;top:100%;left:0;right:0;
+  background:var(--card);border:1px solid var(--border);
+  border-radius:6px;margin-top:4px;z-index:300;
+  max-height:300px;overflow-y:auto;box-shadow:0 4px 12px rgba(0,0,0,0.3);
+}
+body.light-mode .filter-dropdown{
+  box-shadow:0 4px 12px rgba(0,0,0,0.1);
+}
+.filter-dropdown.open{display:block;}
+.filter-option{
+  padding:12px 14px;cursor:pointer;font-size:11px;color:var(--text);
+  border-bottom:1px solid var(--border);transition:all .15s;
+}
+.filter-option:hover{background:var(--surface);color:var(--accent-light);}
+.filter-option.selected{background:rgba(42,82,152,0.2);color:var(--accent-light);font-weight:600;}
+body.light-mode .filter-option.selected{background:rgba(30,58,138,0.15);}
+.filter-option:last-child{border-bottom:none;}
 
 /* LAYOUT */
 .layout{display:grid;grid-template-columns:300px 1fr;}
 @media(max-width:900px){
   .layout{grid-template-columns:1fr;}
   .sidebar{position:static!important;border-right:none;border-bottom:1px solid var(--border);}
-  header,.hero,.prop-nav,.content{padding-left:16px;padding-right:16px;}
+  header,.hero,.filter-section,.content{padding-left:16px;padding-right:16px;}
 }
 
 /* SIDEBAR */
@@ -282,7 +304,7 @@ body.light-mode .zoom-hint{background:rgba(0,0,0,.5);}
   position:absolute;top:10px;left:0;
   padding:3px 12px 3px 10px;font-size:9px;font-weight:700;
   letter-spacing:2px;text-transform:uppercase;
-  background:rgba(0,0,0,.82);backdrop-filter:blur(6px);
+  background:rgba(0,0,0,.82);backdrop-filter:blur(6px);color:#fff;
 }
 .today-pill{
   position:absolute;top:10px;right:10px;
@@ -294,9 +316,9 @@ body.light-mode .zoom-hint{background:rgba(0,0,0,.5);}
 .card-day-tag{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;}
 .card-name{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:1px;line-height:1.1;margin-bottom:10px;}
 .card-divider{height:1px;background:var(--border);margin-bottom:10px;}
+.card-property{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;font-weight:600;}
 .card-date{font-size:12px;color:var(--accent-light);font-weight:600;}
 .card-time{font-size:11px;color:var(--muted);margin-top:3px;}
-.card-property{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-top:6px;font-weight:600;}
 
 /* States */
 .empty-section{
@@ -315,7 +337,7 @@ body.light-mode .zoom-hint{background:rgba(0,0,0,.5);}
   display:none;align-items:center;justify-content:center;padding:20px;
   backdrop-filter:blur(10px);
 }
-body.light-mode .lightbox{background:rgba(0,0,0,.85);}
+body.light-mode .lightbox{background:rgba(0,0,0,.92);}
 .lightbox.open{display:flex;}
 .lb-inner{position:relative;max-width:560px;width:100%;max-height:90vh;display:flex;flex-direction:column;animation:lbIn .25s ease;}
 @keyframes lbIn{from{opacity:0;transform:scale(.94)}to{opacity:1;transform:scale(1)}}
@@ -336,19 +358,19 @@ body.light-mode .lightbox{background:rgba(0,0,0,.85);}
   color:#fff;border:none;width:28px;height:28px;border-radius:50%;
   font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:10;
 }
-.lb-info{margin-top:14px;display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-shrink:0;}
-.lb-name{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:2px;}
-.lb-prop{font-size:10px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-top:3px;}
-.lb-date{text-align:right;font-size:12px;color:var(--accent-light);font-weight:600;}
-.lb-actions{margin-top:12px;display:flex;gap:10px;flex-shrink:0;}
+.lb-info{margin-top:14px;display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-shrink:0;padding:0 14px;}
+.lb-name{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:2px;color:#fff;}
+.lb-prop{font-size:10px;color:#ccc;letter-spacing:2px;text-transform:uppercase;margin-top:3px;}
+.lb-date{text-align:right;font-size:12px;color:#ccc;font-weight:600;}
+.lb-actions{margin-top:12px;display:flex;gap:10px;flex-shrink:0;padding:0 14px;}
 .lb-btn{
   flex:1;padding:10px 16px;border-radius:6px;
   font-family:'DM Sans',sans-serif;font-size:11px;font-weight:600;
   letter-spacing:1px;text-transform:uppercase;cursor:pointer;
-  border:1px solid var(--border);background:var(--surface);
-  color:var(--text);transition:all .2s;text-align:center;
+  border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.1);
+  color:#fff;transition:all .2s;text-align:center;
 }
-.lb-btn:hover{border-color:var(--accent);color:var(--accent-light);}
+.lb-btn:hover{border-color:var(--accent-light);background:rgba(42,82,152,.2);color:#fff;}
 
 /* FOOTER */
 footer{
@@ -417,21 +439,36 @@ footer{
   </div>
 </div>
 
-<div class="prop-nav">
-  <button class="prop-btn active" data-prop="all" onclick="setFilter('all', 'prop')">All Properties</button>
-  <button class="prop-btn" data-prop="Northcreek" onclick="setFilter('Northcreek', 'prop')">Northcreek</button>
-  <button class="prop-btn" data-prop="985 Space Center" onclick="setFilter('985 Space Center', 'prop')">985 Space Center</button>
-  <button class="prop-btn" data-prop="1055 Newport" onclick="setFilter('1055 Newport', 'prop')">1055 Newport</button>
-  <button class="prop-btn" data-prop="Garden Gateway" onclick="setFilter('Garden Gateway', 'prop')">Garden Gateway</button>
-  <button class="prop-btn" data-prop="Presidio" onclick="setFilter('Presidio', 'prop')">Presidio</button>
-</div>
+<div class="filter-section">
+  <div class="filter-group">
+    <button class="filter-btn" onclick="toggleDropdown('propDrop')">
+      <span id="propLabel">All Properties</span>
+      <span>▼</span>
+    </button>
+    <div class="filter-dropdown" id="propDrop">
+      <div class="filter-option selected" data-value="all" onclick="selectFilter('prop', 'all', 'All Properties')">All Properties</div>
+    </div>
+  </div>
 
-<div class="prop-nav" id="cuisineNav" style="display:none;border-bottom:none;border-top:1px solid var(--border);padding-top:0;padding-bottom:0;">
-  <button class="cuisine-btn active" data-cuisine="all" onclick="setFilter('all', 'cuisine')">All Cuisines</button>
-</div>
+  <div class="filter-group">
+    <button class="filter-btn" onclick="toggleDropdown('cuisineDrop')">
+      <span id="cuisineLabel">All Cuisines</span>
+      <span>▼</span>
+    </button>
+    <div class="filter-dropdown" id="cuisineDrop">
+      <div class="filter-option selected" data-value="all" onclick="selectFilter('cuisine', 'all', 'All Cuisines')">All Cuisines</div>
+    </div>
+  </div>
 
-<div class="prop-nav" id="truckNav" style="display:none;border-bottom:none;border-top:1px solid var(--border);padding-top:0;padding-bottom:0;">
-  <button class="truck-btn active" data-truck="all" onclick="setFilter('all', 'truck')">All Food Trucks</button>
+  <div class="filter-group">
+    <button class="filter-btn" onclick="toggleDropdown('truckDrop')">
+      <span id="truckLabel">All Food Trucks</span>
+      <span>▼</span>
+    </button>
+    <div class="filter-dropdown" id="truckDrop">
+      <div class="filter-option selected" data-value="all" onclick="selectFilter('truck', 'all', 'All Food Trucks')">All Food Trucks</div>
+    </div>
+  </div>
 </div>
 
 <div class="layout">
@@ -513,6 +550,32 @@ function toggleTheme(){
   localStorage.setItem('theme', document.body.classList.contains('light-mode') ? 'light' : 'dark');
 }
 
+function toggleDropdown(id){
+  const drop = document.getElementById(id);
+  document.querySelectorAll('.filter-dropdown').forEach(d => {
+    if(d.id !== id) d.classList.remove('open');
+  });
+  drop.classList.toggle('open');
+}
+
+function selectFilter(type, value, label){
+  if(type === 'prop') {
+    filterProp = value;
+    document.getElementById('propLabel').textContent = label;
+    document.querySelectorAll('#propDrop .filter-option').forEach(o => o.classList.toggle('selected', o.dataset.value === value));
+  } else if(type === 'cuisine') {
+    filterCuisine = value;
+    document.getElementById('cuisineLabel').textContent = label;
+    document.querySelectorAll('#cuisineDrop .filter-option').forEach(o => o.classList.toggle('selected', o.dataset.value === value));
+  } else if(type === 'truck') {
+    filterTruck = value;
+    document.getElementById('truckLabel').textContent = label;
+    document.querySelectorAll('#truckDrop .filter-option').forEach(o => o.classList.toggle('selected', o.dataset.value === value));
+  }
+  document.querySelectorAll('.filter-dropdown').forEach(d => d.classList.remove('open'));
+  renderTodayPanel(); renderCalendar(); renderUpcoming(); renderMain();
+}
+
 (function boot() {
   if(localStorage.getItem('theme') === 'light') document.body.classList.add('light-mode');
   calYear=now.getFullYear(); calMonth=now.getMonth();
@@ -539,7 +602,6 @@ async function loadData() {
           .filter(Boolean)
       }));
 
-    // Load cuisine data
     const cuisineRes = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${CUISINE_TAB}?key=${API_KEY}`);
     const cuisineData = await cuisineRes.json();
     if(cuisineRes.ok){
@@ -553,13 +615,35 @@ async function loadData() {
     document.getElementById('lastUpdated').textContent =
       `Updated ${new Date().toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'})}`;
     document.getElementById('errorBanner').classList.remove('show');
-    updateStats(); renderTodayPanel(); renderCalendar(); renderUpcoming(); renderCuisineFilter(); renderTruckFilter(); renderMain();
+    updateStats(); populateFilters(); renderTodayPanel(); renderCalendar(); renderUpcoming(); renderMain();
   } catch(err) {
     document.getElementById('errorBanner').innerHTML=`Could not load schedule. <code>${err.message}</code>`;
     document.getElementById('errorBanner').classList.add('show');
     document.getElementById('mainContent').innerHTML='<div class="empty-section"><div class="ei">⚠️</div><div class="em">Schedule unavailable</div></div>';
     document.getElementById('todayTrucks').innerHTML='<div class="today-empty"><div class="today-empty-txt">Could not load</div></div>';
   }
+}
+
+function populateFilters(){
+  // Properties
+  const propDrop = document.getElementById('propDrop');
+  PROPS.forEach(p => {
+    propDrop.insertAdjacentHTML('beforeend', `<div class="filter-option" data-value="${p.id}" onclick="selectFilter('prop', '${p.id}', '${p.id}')">${p.id}</div>`);
+  });
+
+  // Cuisines
+  const cuisines = [...new Set(trucks.map(t => cuisineMap[t.name]).filter(Boolean))].sort();
+  const cuisineDrop = document.getElementById('cuisineDrop');
+  cuisines.forEach(c => {
+    cuisineDrop.insertAdjacentHTML('beforeend', `<div class="filter-option" data-value="${c}" onclick="selectFilter('cuisine', '${c}', '${c}')">${c}</div>`);
+  });
+
+  // Trucks
+  const truckNames = [...new Set(trucks.map(t => t.name))].sort();
+  const truckDrop = document.getElementById('truckDrop');
+  truckNames.forEach(name => {
+    truckDrop.insertAdjacentHTML('beforeend', `<div class="filter-option" data-value="${name}" onclick="selectFilter('truck', '${name}', '${name}')">${name}</div>`);
+  });
 }
 
 function iso(d){return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;}
@@ -606,44 +690,6 @@ function matchFilters(t){
 }
 function fmtDate(ds){return new Date(ds+'T00:00:00').toLocaleDateString('en-US',{weekday:'short',month:'long',day:'numeric',year:'numeric'});}
 function fmtDay(ds){return new Date(ds+'T00:00:00').toLocaleDateString('en-US',{weekday:'long'});}
-
-function setFilter(val, type){
-  if(type==='prop'){
-    filterProp=val; filterDate=null;
-    document.querySelectorAll('.prop-btn').forEach(b=>b.classList.toggle('active',b.dataset.prop===val));
-  } else if(type==='cuisine'){
-    filterCuisine=val;
-    document.querySelectorAll('.cuisine-btn').forEach(b=>b.classList.toggle('active',b.dataset.cuisine===val));
-  } else if(type==='truck'){
-    filterTruck=val;
-    document.querySelectorAll('.truck-btn').forEach(b=>b.classList.toggle('active',b.dataset.truck===val));
-  }
-  renderTodayPanel(); renderCalendar(); renderUpcoming(); renderMain();
-}
-
-function renderCuisineFilter(){
-  const cuisines = [...new Set(trucks.map(t => cuisineMap[t.name]).filter(Boolean))].sort();
-  const nav = document.getElementById('cuisineNav');
-  if(!cuisines.length) return;
-  nav.style.display='flex';
-  let html = '<button class="cuisine-btn active" data-cuisine="all" onclick="setFilter(\'all\', \'cuisine\')">All Cuisines</button>';
-  cuisines.forEach(c => {
-    html += `<button class="cuisine-btn" data-cuisine="${c}" onclick="setFilter('${c}', 'cuisine')">${c}</button>`;
-  });
-  nav.innerHTML = html;
-}
-
-function renderTruckFilter(){
-  const truckNames = [...new Set(trucks.map(t => t.name))].sort();
-  const nav = document.getElementById('truckNav');
-  if(!truckNames.length) return;
-  nav.style.display='flex';
-  let html = '<button class="truck-btn active" data-truck="all" onclick="setFilter(\'all\', \'truck\')">All Food Trucks</button>';
-  truckNames.forEach(name => {
-    html += `<button class="truck-btn" data-truck="${name}" onclick="setFilter('${name.replace(/'/g,"\\'")}', 'truck')">${name}</button>`;
-  });
-  nav.innerHTML = html;
-}
 
 function renderTodayPanel(){
   const list=trucks.filter(t=>t.date===todayStr&&matchFilters(t));
@@ -916,6 +962,11 @@ function closeLb(e){
   }
 }
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeLb();});
+document.addEventListener('click', e => {
+  if(!e.target.closest('.filter-group')) {
+    document.querySelectorAll('.filter-dropdown').forEach(d => d.classList.remove('open'));
+  }
+});
 </script>
 </body>
 </html>
